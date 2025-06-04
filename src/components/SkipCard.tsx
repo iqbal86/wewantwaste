@@ -1,16 +1,17 @@
 import { Card, Typography, Button, Grid } from '@mui/material'
+import ConstructionIcon from '@mui/icons-material/Construction'
+import DirectionsCarIcon from '@mui/icons-material/DirectionsCar'
 import { SkipApiResponseWithImageUrl } from '../types/types'
 import { CSSProperties } from 'react'
 
 const styles = {
   card: (selected: boolean) => ({
-    position: 'relative',
     borderStyle: 'solid',
     borderWidth: '2.5px',
     borderColor: selected ? '#1751F0' : '#e0e0e0',
     borderRadius: 5,
     boxShadow: selected
-      ? '0 8px 32px 0 rgba(23,81,240,0.18)'
+      ? '0 4px 16px 0 rgba(23,81,240,0.12)'
       : '0 4px 16px 0 rgba(31,38,135,0.08)',
     background: 'rgba(255,255,255,0.75)',
     backdropFilter: 'blur(8px)',
@@ -23,15 +24,17 @@ const styles = {
     flexDirection: 'column',
     justifyContent: 'flex-end',
     overflow: 'hidden',
+    transform: selected ? 'scale(0.97)' : 'none',
     '&:hover': {
       boxShadow: '0 16px 40px 0 rgba(23,81,240,0.25)',
-      transform: 'scale(1.035) translateY(-4px)',
+      transform: selected
+        ? 'scale(0.97)'
+        : {
+            xs: 'none',
+            md: 'scale(1.035) translateY(-4px)',
+          },
       borderColor: '#1751F0',
       zIndex: 10,
-    },
-    '&:hover .overlay': {
-      opacity: 1,
-      pointerEvents: 'auto',
     },
     '&:hover .image': {
       filter: 'brightness(0.7) scale(1.04)',
@@ -60,6 +63,39 @@ const styles = {
     zIndex: 1,
     transition: 'filter 0.3s, transform 0.3s',
   } as CSSProperties,
+  badgeLeftWrap: {
+    position: 'absolute',
+    top: 14,
+    left: 14,
+    zIndex: 6,
+    display: 'flex',
+    flexWrap: 'wrap',
+    gap: 1,
+    alignItems: 'center',
+  },
+  badge: {
+    display: 'flex',
+    alignItems: 'center',
+    gap: 0.5,
+    px: 1.5,
+    py: 0.5,
+    borderRadius: 999,
+    fontWeight: 700,
+    fontSize: 13,
+    fontFamily: 'Inter, Roboto, Arial, sans-serif',
+    boxShadow: '0 2px 8px #1751F022',
+    color: '#fff',
+    userSelect: 'none',
+    pointerEvents: 'none',
+    whiteSpace: 'nowrap',
+    letterSpacing: 0.3,
+  },
+  badgeHeavy: {
+    background: 'linear-gradient(90deg, #2E7D32 60%, #81C784 100%)',
+  },
+  badgeRoad: {
+    background: 'linear-gradient(90deg, #1976D2 60%, #64B5F6 100%)',
+  },
   yardBadge: {
     position: 'absolute',
     top: 14,
@@ -71,12 +107,16 @@ const styles = {
     fontSize: 15,
     px: 1.5,
     py: 0.5,
-    borderRadius: 2,
+    borderRadius: 999,
     boxShadow: '0 2px 8px #1751F033',
     letterSpacing: 0.5,
     fontFamily: 'Inter, Roboto, Arial, sans-serif',
-    pointerEvents: 'none',
     userSelect: 'none',
+    pointerEvents: 'none',
+    whiteSpace: 'nowrap',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'flex-end',
   },
   overlay: (selected: boolean) => ({
     position: 'absolute',
@@ -131,8 +171,6 @@ const styles = {
     flexDirection: 'column',
     alignItems: 'flex-start',
     justifyContent: 'flex-end',
-    background:
-      'linear-gradient(0deg, rgba(0,0,0,0.45) 60%, rgba(0,0,0,0.0) 100%)',
     color: '#fff',
     minHeight: 120,
   },
@@ -182,51 +220,72 @@ type SkipCardProps = {
   onSelect: () => void
 }
 
-const SkipCard = ({ skip, selected, onSelect }: SkipCardProps) => (
-  <Card
-    sx={styles.card(selected)}
-    onClick={onSelect}
-    aria-selected={selected}
-    tabIndex={0}
-  >
-    {selected && <Grid sx={styles.accent} />}
-    <img
-      src={skip.imageUrl}
-      alt={skip.size.toString()}
-      className="image"
-      style={styles.image}
-    />
-    <Grid sx={styles.yardBadge}>{skip.size} Yard</Grid>
-    <Grid
-      sx={styles.overlay(selected)}
-      className="overlay"
-      container
-      direction="column"
-      alignItems="center"
-      justifyContent="center"
+const SkipCard = ({ skip, selected, onSelect }: SkipCardProps) => {
+  const priceExVat = Math.ceil(
+    skip.price_before_vat - (Number(skip.price_before_vat) / 100) * skip.vat,
+  )
+
+  return (
+    <Card
+      sx={styles.card(selected)}
+      onClick={onSelect}
+      aria-selected={selected}
+      tabIndex={0}
     >
-      <Typography sx={styles.overlayTitle}>{skip.size} Yard Skip</Typography>
-      <Typography
-        sx={styles.overlayDetails}
-      >{`${skip.hire_period_days} day hire period`}</Typography>
-      <Typography sx={styles.overlayPrice}>£{skip.price_before_vat}</Typography>
-    </Grid>
-    <Grid
-      sx={styles.content}
-      container
-      direction="column"
-      alignItems="flex-start"
-      justifyContent="flex-end"
-    >
-      {selected && (
-        <Grid item sx={styles.buttonCenter}>
-          <Button variant="contained" sx={styles.button} onClick={onSelect}>
-            Continue
-          </Button>
-        </Grid>
-      )}
-    </Grid>
-  </Card>
-)
+      <Grid container sm={8} sx={styles.badgeLeftWrap}>
+        {skip.allows_heavy_waste && (
+          <Grid item sx={{ ...styles.badge, ...styles.badgeHeavy }}>
+            <ConstructionIcon sx={{ fontSize: 16 }} /> Heavy Waste
+          </Grid>
+        )}
+        {!skip.allowed_on_road && (
+          <Grid item sx={{ ...styles.badge, ...styles.badgeRoad }}>
+            <DirectionsCarIcon sx={{ fontSize: 16 }} /> Not On Road
+          </Grid>
+        )}
+      </Grid>
+      <Grid item sx={styles.yardBadge}>
+        {skip.size} Yard
+      </Grid>
+      {selected && <Grid sx={styles.accent} />}
+      <img
+        src={skip.imageUrl}
+        alt={skip.size.toString()}
+        className="image"
+        style={styles.image}
+      />
+      <Grid
+        item
+        sx={styles.overlay(selected)}
+        className="overlay"
+        container
+        direction="column"
+        alignItems="center"
+        justifyContent="center"
+      >
+        <Typography sx={styles.overlayTitle}>{skip.size} Yard Skip</Typography>
+        <Typography
+          sx={styles.overlayDetails}
+        >{`${skip.hire_period_days} day hire period`}</Typography>
+        <Typography sx={styles.overlayPrice}>£{priceExVat}</Typography>
+      </Grid>
+      <Grid
+        sx={styles.content}
+        container
+        direction="column"
+        alignItems="flex-start"
+        justifyContent="flex-end"
+      >
+        {selected && (
+          <Grid item sx={styles.buttonCenter}>
+            <Button variant="contained" sx={styles.button} onClick={onSelect}>
+              Continue
+            </Button>
+          </Grid>
+        )}
+      </Grid>
+    </Card>
+  )
+}
 
 export default SkipCard

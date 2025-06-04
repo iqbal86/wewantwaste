@@ -1,6 +1,5 @@
 import { Typography, Grid } from '@mui/material'
 import SkipCard from '../components/SkipCard'
-import SummaryBar from '../components/SummaryBar'
 import OrderProgressBar from '../components/OrderProgressBar'
 import { SkipApiResponseWithImageUrl } from '../types/types'
 
@@ -44,9 +43,6 @@ const SkipSelectionPage = ({
         />
       </Grid>
     ))}
-    <Grid item xs={12}>
-      <SummaryBar selectedSkip={selectedSkip} onContinue={onContinue} />
-    </Grid>
   </Grid>
 )
 
