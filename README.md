@@ -2,6 +2,7 @@
 
 A modern, responsive skip hire selection page built with a focus on clean, maintainable React code and significant UI/UX improvements. This project demonstrates best practices in component architecture, state management, and accessibility, ensuring the page displays and functions seamlessly on both mobile web browsers and desktop devices.
 
+Live demo https://wewantwaste.onrender.com/
 ## Project Requirements & Implementation
 
 ### 1. Complete Page Redesign
