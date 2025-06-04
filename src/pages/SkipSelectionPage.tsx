@@ -1,6 +1,7 @@
 import { Typography, Grid } from '@mui/material'
 import SkipCard from '../components/SkipCard'
 import SummaryBar from '../components/SummaryBar'
+import OrderProgressBar from '../components/OrderProgressBar'
 import { SkipApiResponseWithImageUrl } from '../types/types'
 
 const styles = {
@@ -26,6 +27,7 @@ const SkipSelectionPage = ({
   onContinue,
 }: SkipSelectionPageProps) => (
   <Grid container spacing={3} sx={styles.container}>
+    <OrderProgressBar currentStep={2} />
     <Grid item xs={12}>
       <Typography variant="h4" gutterBottom>
         Select Your Skip
@@ -36,7 +38,9 @@ const SkipSelectionPage = ({
         <SkipCard
           skip={skip}
           selected={selectedId === String(skip.id)}
-          onSelect={() => setSelectedId(String(skip.id))}
+          onSelect={() =>
+            setSelectedId(selectedId === String(skip.id) ? '' : String(skip.id))
+          }
         />
       </Grid>
     ))}
