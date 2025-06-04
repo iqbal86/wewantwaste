@@ -26,6 +26,7 @@ const styles = {
     px: { xs: 0.5, sm: 2 },
     display: 'flex',
     justifyContent: 'center',
+    margin: '0 0 0 15px',
     overflowX: { xs: 'auto', sm: 'visible' },
     mt: 2,
     mb: 4,

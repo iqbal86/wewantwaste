@@ -1,6 +1,8 @@
+import { useState } from 'react'
 import { Card, Typography, Button, Grid } from '@mui/material'
 import ConstructionIcon from '@mui/icons-material/Construction'
 import DirectionsCarIcon from '@mui/icons-material/DirectionsCar'
+import SkipPlacementModal from './SkipPlacementModal'
 import { SkipApiResponseWithImageUrl } from '../types/types'
 import { CSSProperties } from 'react'
 
@@ -72,6 +74,7 @@ const styles = {
     flexWrap: 'wrap',
     gap: 1,
     alignItems: 'center',
+    maxWidth: { xs: '55%', sm: '60%', md: '65%' },
   },
   badge: {
     display: 'flex',
@@ -225,6 +228,26 @@ const SkipCard = ({ skip, selected, onSelect }: SkipCardProps) => {
     skip.price_before_vat - (Number(skip.price_before_vat) / 100) * skip.vat,
   )
 
+  // Modal state
+  const [modalOpen, setModalOpen] = useState(false)
+  const [placement, setPlacement] = useState<'private' | 'public'>('private')
+
+  const handleContinue = (e: React.MouseEvent) => {
+    e.stopPropagation()
+    setModalOpen(true)
+  }
+
+  const handleModalClose = () => setModalOpen(false)
+  const handleModalContinue = () => {
+    setModalOpen(false)
+    // You can add further logic here for what happens after continue
+  }
+
+  const handleChooseDifferentSkip = () => {
+    setModalOpen(false)
+    if (selected) onSelect()
+  }
+
   return (
     <Card
       sx={styles.card(selected)}
@@ -232,7 +255,7 @@ const SkipCard = ({ skip, selected, onSelect }: SkipCardProps) => {
       aria-selected={selected}
       tabIndex={0}
     >
-      <Grid container sm={8} sx={styles.badgeLeftWrap}>
+      <Grid container sx={styles.badgeLeftWrap}>
         {skip.allows_heavy_waste && (
           <Grid item sx={{ ...styles.badge, ...styles.badgeHeavy }}>
             <ConstructionIcon sx={{ fontSize: 16 }} /> Heavy Waste
@@ -277,13 +300,24 @@ const SkipCard = ({ skip, selected, onSelect }: SkipCardProps) => {
         justifyContent="flex-end"
       >
         {selected && (
-          <Grid item sx={styles.buttonCenter}>
-            <Button variant="contained" sx={styles.button} onClick={onSelect}>
-              Continue
-            </Button>
-          </Grid>
+          <Button
+            variant="contained"
+            sx={styles.button}
+            onClick={handleContinue}
+          >
+            Continue
+          </Button>
         )}
       </Grid>
+      <SkipPlacementModal
+        open={modalOpen}
+        onClose={handleModalClose}
+        onContinue={handleModalContinue}
+        selectedOption={placement}
+        setSelectedOption={setPlacement}
+        allowedOnRoad={skip.allowed_on_road}
+        onChooseDifferentSkip={handleChooseDifferentSkip}
+      />
     </Card>
   )
 }
