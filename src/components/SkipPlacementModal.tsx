@@ -98,7 +98,7 @@ const styles = {
   },
 }
 
-const SkipPlacementModal: React.FC<SkipPlacementModalProps> = ({
+const SkipPlacementModal = ({
   open,
   onClose,
   onContinue,
@@ -106,7 +106,7 @@ const SkipPlacementModal: React.FC<SkipPlacementModalProps> = ({
   setSelectedOption,
   allowedOnRoad,
   onChooseDifferentSkip,
-}) => {
+}: SkipPlacementModalProps) => {
   const theme = useTheme()
   const showRoadAlert = !allowedOnRoad && selectedOption === 'public'
   return (
